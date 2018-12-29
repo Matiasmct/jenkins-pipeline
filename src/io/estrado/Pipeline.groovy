@@ -19,51 +19,35 @@ def helmConfig(String tiller_namespace) {
     //setup helm connectivity to Kubernetes API and Tiller
     println "initiliazing helm client"
     sh "helm init --upgrade --tiller-namespace ${tiller_namespace}"
+
     println "checking client/server version"
     sh "helm version --tiller-namespace ${tiller_namespace}"
 }
 
 
-def helmDeploy(Map args) {
-    //configure helm client and confirm tiller process is installed
-    helmConfig()
+def helmDeploy(appname, chart_repo, namespace, tiller_namespace) {
 
-    def String namespace
+    println "Running deployment"
 
-    // If namespace isn't parsed into the function set the namespace to the name
-    if (args.namespace == null) {
-        namespace = args.name
-    } else {
-        namespace = args.namespace
-    }
+    // reimplement --wait once it works reliable
+    sh "helm upgrade --install ${appname} ${chart_repo}  --namespace=${namespace} --tiller-namespace=${tiller_namespace}"
 
-    if (args.dry_run) {
-        println "Running dry-run deployment"
+    // sleeping until --wait works reliably
+    sleep(20)
 
-        sh "helm upgrade --dry-run --install ${args.name} ${args.chart_dir} --set imageTag=${args.version_tag},replicas=${args.replicas},cpu=${args.cpu},memory=${args.memory},ingress.hostname=${args.hostname} --namespace=${namespace}"
-    } else {
-        println "Running deployment"
-
-        // reimplement --wait once it works reliable
-        sh "helm upgrade --install ${args.name} ${args.chart_dir} --set imageTag=${args.version_tag},replicas=${args.replicas},cpu=${args.cpu},memory=${args.memory},ingress.hostname=${args.hostname} --namespace=${namespace} --tiller-namespace=${args.tiller_namespace}"
-
-        // sleeping until --wait works reliably
-        sleep(20)
-
-        echo "Application ${args.name} successfully deployed. Use helm status ${args.name} to check"
-    }
+    echo "Application ${appname} successfully deployed. Use helm status ${appname} to check"
 }
 
 def helmDelete(Map args) {
-        println "Running helm delete ${args.name}"
+        println "Running helm delete ${appname}"
 
-        sh "helm delete ${args.name}"
+        sh "helm delete ${appname}"
 }
 
 def helmTest(Map args) {
     println "Running Helm test"
 
-    sh "helm test ${args.name} --cleanup"
+    sh "helm test ${appname} --cleanup"
 }
 
 def gitEnvVars() {
