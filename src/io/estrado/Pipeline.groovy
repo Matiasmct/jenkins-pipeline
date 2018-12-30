@@ -24,6 +24,9 @@ def helmConfig(String tiller_namespace) {
     println "checking client/server version"
     sh "helm version --tiller-namespace ${tiller_namespace}"
 
+    println "Installing helm s3 plugin"
+    helm plugin install https://github.com/hypnoglow/helm-s3.git
+
     println "Adding giffgaff-charts repo"
     sh "helm repo add giffgaff-charts s3://giffgaff-charts/charts --tiller-namespace ${tiller_namespace}"
 }
