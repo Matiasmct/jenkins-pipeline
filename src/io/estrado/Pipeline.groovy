@@ -3,8 +3,8 @@ package io.estrado;
 
 def kubectlTest() {
     // Test that kubectl can correctly communication with the Kubernetes API
-    println "checking kubectl connnectivity to the API"
-    sh "kubectl get nodes"
+    println "checking oc connnectivity to the API"
+    sh "oc get nodes"
 
 }
 
@@ -15,37 +15,32 @@ def helmLint(String chart_dir) {
 
 }
 
-def helmConfig(String tiller_namespace) {
+def helmConfig(tiller, helm_repo) {
     //setup helm connectivity to Kubernetes API and Tiller
     println "initiliazing helm client"
 
-    sh "helm init --upgrade --tiller-namespace ${tiller_namespace}"
+    sh "helm init --upgrade --tiller-namespace ${tiller}"
 
     println "checking client/server version"
-    sh "helm version --tiller-namespace ${tiller_namespace}"
+    sh "helm version --tiller-namespace ${tiller}"
 
-    println "Adding giffgaff-charts repo"
-    sh "helm repo add giffgaff-charts s3://giffgaff-charts/charts --tiller-namespace ${tiller_namespace}"
+    println "Adding ${helm_repo} repo"
+    sh "export AWS_REGION=\'eu-west-1\' && helm repo add ${helm_repo} s3://${helm_repo} --tiller-namespace ${tiller} && helm s3 reindex giffgaff-charts"
 }
 
 
-def helmDeploy(appname, chart_repo, namespace, tiller_namespace) {
+def helmDeploy(Map args) {
 
     println "Running deployment"
+    sh "export AWS_REGION=\'eu-west-1\' && helm upgrade --install ${args.namespace}-${args.appname} ${args.helm_repo}/${args.appname} -f values.yaml --namespace=${args.namespace} --tiller-namespace=${args.tiller}"
 
-    // reimplement --wait once it works reliable
-    sh "helm upgrade --install ${appname} ${chart_repo}  --namespace=${namespace} --tiller-namespace=${tiller_namespace}"
-
-    // sleeping until --wait works reliably
-    sleep(20)
-
-    echo "Application ${appname} successfully deployed. Use helm status ${appname} to check"
+    echo "Application ${args.appname} successfully deployed. Use helm status ${args.appname} to check"
 }
 
 def helmDelete(Map args) {
-        println "Running helm delete ${appname}"
+    println "Running helm delete ${appname}"
 
-        sh "helm delete ${appname}"
+    sh "helm delete ${appname}"
 }
 
 def helmTest(Map args) {
@@ -160,15 +155,15 @@ def getContainerRepoAcct(config) {
 }
 
 @NonCPS
-def getMapValues(Map map=[:]) {
+def getMapValues(Map map = [:]) {
     // jenkins and workflow restriction force this function instead of map.values(): https://issues.jenkins-ci.org/browse/JENKINS-27421
     def entries = []
     def map_values = []
 
     entries.addAll(map.entrySet())
 
-    for (int i=0; i < entries.size(); i++){
-        String value =  entries.get(i).value
+    for (int i = 0; i < entries.size(); i++) {
+        String value = entries.get(i).value
         map_values.add(value)
     }
 
