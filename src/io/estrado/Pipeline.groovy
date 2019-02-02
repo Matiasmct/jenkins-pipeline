@@ -32,12 +32,14 @@ def helmConfig(tiller, helm_repo) {
 def helmDeploy(Map args) {
 
     println "Running deployment"
-    if ($args.chart_version) {
+    if (args.chart_version) {
         sh "export AWS_REGION=\'eu-west-1\' && helm upgrade --install ${args.namespace}-${args.appname} ${args.helm_repo}/${args.appname} -f ${args.namespace}/${args.environment}/values.yaml --namespace=${args.namespace} --version=${args.chart_version} --tiller-namespace=${args.tiller}"
+        echo "Application ${args.appname} version ${args.chart_version} successfully deployed. Use helm status ${args.appname} to check"
     } else {
         sh "export AWS_REGION=\'eu-west-1\' && helm upgrade --install ${args.namespace}-${args.appname} ${args.helm_repo}/${args.appname} -f ${args.namespace}/${args.environment}/values.yaml --namespace=${args.namespace} --tiller-namespace=${args.tiller}"
+        echo "Application ${args.appname} latest version successfully deployed. Use helm status ${args.appname} to check"
     }
-    echo "Application ${args.appname} successfully deployed. Use helm status ${args.appname} to check"
+
 }
 
 def helmDelete(Map args) {
