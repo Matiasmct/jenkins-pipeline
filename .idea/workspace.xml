@@ -14,7 +14,7 @@
         <entry file="file://$PROJECT_DIR$/src/io/estrado/Pipeline.groovy">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="233">
-              <caret line="27" column="185" selection-start-line="27" selection-start-column="185" selection-end-line="27" selection-end-column="185" />
+              <caret line="27" column="153" selection-start-line="27" selection-start-column="153" selection-end-line="27" selection-end-column="153" />
             </state>
           </provider>
         </entry>
@@ -110,6 +110,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Image Layers" />
       <window_info id="Designer" />
@@ -142,7 +143,7 @@
     <entry file="file://$PROJECT_DIR$/src/io/estrado/Pipeline.groovy">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="233">
-          <caret line="27" column="185" selection-start-line="27" selection-start-column="185" selection-end-line="27" selection-end-column="185" />
+          <caret line="27" column="153" selection-start-line="27" selection-start-column="153" selection-end-line="27" selection-end-column="153" />
         </state>
       </provider>
     </entry>
