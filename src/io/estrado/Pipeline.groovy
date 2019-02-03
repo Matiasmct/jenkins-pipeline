@@ -25,7 +25,7 @@ def helmConfig(tiller, helm_repo) {
     sh "helm version --tiller-namespace ${tiller}"
 
     println "Adding ${helm_repo} repo"
-    sh "export AWS_REGION=\'eu-west-1\' && helm repo add ${helm_repo} s3://${helm_repo} --tiller-namespace ${tiller} && helm s3 reindex giffgaff-charts"
+    sh "export AWS_REGION=\'eu-west-1\' && helm repo add ${helm_repo} s3://${helm_repo} --tiller-namespace ${tiller} && helm s3 reindex giffgaff-charts --acl=\'authenticated-read\'"
 }
 
 
