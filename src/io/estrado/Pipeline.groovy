@@ -38,9 +38,10 @@ def helmDeploy(Map args) {
     } else {
         sh "export AWS_REGION=\'eu-west-1\' && helm upgrade --install ${args.namespace}-${args.appname} ${args.helm_repo}/${args.appname} -f ${args.namespace}/${args.environment}/values.yaml --namespace=${args.namespace} --version=${args.chart_version} --tiller-namespace=${args.tiller} --wait"
         echo "Application ${args.appname} version ${args.chart_version} successfully deployed. Use helm status ${args.appname} to check"
-
     }
-
+    if (args.appname == "grafana") {
+        sh "oc delete pods -l app=${args.appname} --namespace=${args.namespace}"
+    }
 }
 
 def helmDelete(Map args) {
